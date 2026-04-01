@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer Pro</title>
+    <style>
+        :root { --primary: #6366f1; --accent: #a855f7; --glass: rgba(255, 255, 255, 0.9); }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background: #0f172a; display: flex; justify-content: center; align-items: center; min-height: 100vh; color: #f8fafc; }
+        .glass-card { background: var(--glass); backdrop-filter: blur(10px); padding: 3rem; border-radius: 24px; width: 90%; max-width: 650px; color: #1e293b; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        h1 { text-align: center; color: var(--primary); margin-bottom: 5px; }
+        .upload-box { border: 2px dashed var(--primary); padding: 2rem; border-radius: 15px; text-align: center; margin-top: 20px; background: rgba(99, 102, 241, 0.05); }
+        button { background: linear-gradient(135deg, var(--primary), var(--accent)); color: white; border: none; padding: 1rem; border-radius: 10px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 15px; font-size: 1rem; transition: 0.3s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4); }
+        #loading { display: none; text-align: center; margin-top: 20px; font-weight: bold; color: var(--primary); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+        #resultContainer { display: none; margin-top: 25px; border-top: 2px solid #e2e8f0; padding-top: 20px; }
+        #result { background: #f1f5f9; padding: 1.5rem; border-radius: 12px; white-space: pre-wrap; line-height: 1.6; max-height: 350px; overflow-y: auto; font-size: 0.95rem; }
+        .score-badge { background: #10b981; color: white; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="glass-card">
+    <h1>Resume AI <span>Expert</span></h1>
+    <p style="text-align: center; color: #64748b;">Powered by Llama 3 & Groq Cloud</p>
+
+    <div class="upload-box">
+        <input type="file" id="resumeFile" accept="application/pdf">
+        <button id="analyzeBtn" onclick="uploadFile()">Launch AI Analysis</button>
+    </div>
+
+    <div id="loading">✨ AI is reading your resume... Please wait...</div>
+
+    <div id="resultContainer">
+        <h3>Analysis Report <span class="score-badge" id="scoreVal">--</span></h3>
+        <div id="result"></div>
+        <button style="background: #64748b;" onclick="window.location.reload()">Reset</button>
+    </div>
+</div>
+
+<script>
+    async function uploadFile() {
+        const fileInput = document.getElementById('resumeFile');
+        const btn = document.getElementById('analyzeBtn');
+        const loading = document.getElementById('loading');
+        const resultContainer = document.getElementById('resultContainer');
+        const resultDiv = document.getElementById('result');
+        const scoreVal = document.getElementById('scoreVal');
+
+        if (!fileInput.files[0]) {
+            alert("Please select your PDF first!");
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append("file", fileInput.files[0]);
+
+        btn.disabled = true;
+        loading.style.display = "block";
+        resultContainer.style.display = "none";
+
+        try {
+            // Updated URL to the absolute path
+            const response = await fetch('http://localhost:8080/api/resume/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) throw new Error("Server communication failed.");
+
+            const data = await response.json();
+
+            // Extracting content from Groq JSON
+            const aiText = data.choices[0].message.content;
+
+            // Basic Regex to find a score (e.g., 75/100)
+            const scoreMatch = aiText.match(/(\d+)\/100/) || aiText.match(/Score:?\s*(\d+)/i);
+            scoreVal.innerText = scoreMatch ? scoreMatch[1] + "/100" : "Done";
+
+            resultDiv.innerText = aiText;
+            resultContainer.style.display = "block";
+        } catch (error) {
+            console.error(error);
+            alert("Error: " + error.message);
+        } finally {
+            loading.style.display = "none";
+            btn.disabled = false;
+        }
+    }
+</script>
+
+</body>
+</html>
