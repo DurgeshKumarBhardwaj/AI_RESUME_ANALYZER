@@ -1,76 +1,66 @@
-/* Custom variables for easy color changes */
 :root {
     --primary: #6366f1;
-    --secondary: #a855f7;
-    --bg-dark: #0f172a;
+    --success: #10b981;
+    --danger: #ef4444;
     --glass: rgba(255, 255, 255, 0.95);
 }
 
 body {
-    margin: 0;
-    font-family: 'Inter', 'Segoe UI', sans-serif;
-    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
-    color: #f8fafc;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+    background: #0f172a; /* Deep dark background */
+    font-family: 'Inter', system-ui, sans-serif;
+    color: #1e293b;
 }
 
 .glass-card {
     background: var(--glass);
-    color: #1e293b;
-    padding: 40px;
-    border-radius: 24px;
-    width: 90%;
-    max-width: 700px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(10px);
+    border-radius: 24px;
+    padding: 3rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    max-width: 800px;
+    margin: 50px auto;
 }
 
-h1 { color: var(--primary); font-size: 2.5rem; margin-bottom: 10px; text-align: center; }
+/* Dashboard Elements */
+.dashboard-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
 
-/* Beautiful Button */
-#analyzeBtn {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+.score-badge {
+    background: var(--success);
     color: white;
-    border: none;
-    padding: 15px 30px;
-    border-radius: 12px;
-    font-weight: 700;
-    cursor: pointer;
-    width: 100%;
-    font-size: 1.1rem;
-    transition: transform 0.2s, box-shadow 0.2s;
-    margin-top: 20px;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.4);
 }
 
-#analyzeBtn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px -10px var(--primary);
-}
-
-/* Report Styling */
-#result {
+.summary-box {
     background: #f1f5f9;
-    padding: 20px;
-    border-radius: 12px;
-    border-left: 5px solid var(--primary);
+    padding: 1.5rem;
+    border-radius: 16px;
+    border-left: 6px solid var(--primary);
+    margin-bottom: 2rem;
     line-height: 1.6;
-    margin-top: 20px;
 }
 
-/* Animated Progress Bar */
-.progress-bar {
-    height: 15px;
-    background: #e2e8f0;
-    border-radius: 10px;
-    overflow: hidden;
-    margin-top: 10px;
+.feedback-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+
+.card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
-.progress-fill {
-    height: 100%;
-    background: #10b981;
-    width: 0%;
-    transition: width 1s ease-in-out;
+
+.card h4 { margin-top: 0; display: flex; align-items: center; gap: 8px; }
+
+ul { padding-left: 20px; margin: 0; }
+li { margin-bottom: 12px; font-size: 0.95rem; color: #475569; }
+
+button {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
 }
+button:hover { transform: translateY(-2px); filter: brightness(1.1); }

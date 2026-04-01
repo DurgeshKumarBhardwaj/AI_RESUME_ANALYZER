@@ -1,5 +1,6 @@
 package com.example.resumeanalyzer.controller;
 
+// THESE ARE THE MISSING IMPORTS CAUSING THE ERRORS
 import com.example.resumeanalyzer.service.ResumeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -7,31 +8,34 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/resume")
-@CrossOrigin(origins = "*") // 1. INTEGRATION: Allows Frontend to talk to Backend
+@CrossOrigin(origins = "*")
 public class ResumeController {
 
     private final ResumeService resumeService;
 
-    // Constructor Injection
     public ResumeController(ResumeService resumeService) {
         this.resumeService = resumeService;
     }
 
+    // ACTION 1: The "Quick Audit" Button
     @PostMapping("/upload")
-    public ResponseEntity<String> uploadResume(@RequestParam("file") MultipartFile file) {
-        if (file.isEmpty()) {
-            return ResponseEntity.badRequest().body("Please select a file to upload.");
-        }
-
+    public ResponseEntity<String> quickAudit(@RequestParam("file") MultipartFile file) {
         try {
-            // Extract text from PDF
-            String extractedText = resumeService.extractTextFromPDF(file);
+            String text = resumeService.extractTextFromPDF(file);
+            return ResponseEntity.ok(resumeService.analyzeWithAI(text));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
+        }
+    }
 
-            // Get AI Analysis from Gemini
-            String aiResponse = resumeService.analyzeWithAI(extractedText);
-
-            return ResponseEntity.ok(aiResponse);
-
+    // ACTION 2: The "Match with Job" Button
+    @PostMapping("/compare")
+    public ResponseEntity<String> targetedMatch(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("jd") String jd) {
+        try {
+            String text = resumeService.extractTextFromPDF(file);
+            return ResponseEntity.ok(resumeService.analyzeMatch(text, jd));
         } catch (Exception e) {
             return ResponseEntity.internalServerError().body("Error: " + e.getMessage());
         }
